@@ -2,6 +2,11 @@ import configparser
 import tkinter as tk
 from tkinter import Tk, messagebox, Button, filedialog
 
+import matplotlib
+matplotlib.use("TkAgg")
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
+from matplotlib.figure import Figure
+
 from arduino_connection import ArduinoConnection
 from utils import resource_path
 
@@ -24,6 +29,15 @@ class App:
         self.button_start_stop.pack()
         self.button_start_stop["state"] = "disabled"
 
+        f = Figure(figsize=(5,5), dpi=100)
+
+        self.canvas = FigureCanvasTkAgg(f, self.window)
+        self.canvas.get_tk_widget().pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
+
+        toolbar = NavigationToolbar2Tk(self.canvas, self.window)
+        toolbar.update()
+        self.canvas._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+
     def mainloop(self):
         self.window.protocol("WM_DELETE_WINDOW", self.on_close)
         while self.active:
@@ -31,6 +45,19 @@ class App:
             self.window.update()
             if self.measurement_active:
                 self.arduino_connection.collect()
+                self.plot()
+
+    def plot(self):
+        f = Figure(figsize=(5,5), dpi=100)
+        ax = f.add_subplot(111)
+        for sensor_id in range(self.arduino_connection.number_sensors):
+            ax.plot("timestamp", "value",data=self.arduino_connection.data[sensor_id], label=f"Sensor {sensor_id+1}")
+        ax.set_xlabel("Time [s]")
+        ax.set_ylabel("GSR-Value")
+        ax.legend()
+        self.canvas.figure = f
+
+        self.canvas.draw()
 
     def on_close(self):
         self.arduino_connection.close()
@@ -40,6 +67,7 @@ class App:
     def connect(self):
         if self.arduino_connection.connected:
             self.arduino_connection.close()
+            self.measurement_active = False
             self.button_connect.configure(background=self.defaultbg)
             return
         if self.arduino_connection.connect():

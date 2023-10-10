@@ -76,6 +76,7 @@ class ArduinoConnection:
         message = self.wait_message("Sensor")
         _, sensor_id, value = message.split(",")
         sensor_id = int(sensor_id)
+        value = int(value)
         row = {"timestamp": time.perf_counter()-self.start_time, "value": value}
         
         self.data[sensor_id].loc[len(self.data[sensor_id])] = row

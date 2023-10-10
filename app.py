@@ -29,7 +29,7 @@ class App:
         self.button_start_stop.pack()
         self.button_start_stop["state"] = "disabled"
 
-        f = Figure(figsize=(5,5), dpi=100)
+        f = Figure(figsize=(10,5), dpi=100)
 
         self.canvas = FigureCanvasTkAgg(f, self.window)
         self.canvas.get_tk_widget().pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
@@ -48,12 +48,12 @@ class App:
                 self.plot()
 
     def plot(self):
-        f = Figure(figsize=(5,5), dpi=100)
+        f = Figure(figsize=(10,5), dpi=100)
         ax = f.add_subplot(111)
         for sensor_id in range(self.arduino_connection.number_sensors):
-            ax.plot("timestamp", "value",data=self.arduino_connection.data[sensor_id], label=f"Sensor {sensor_id+1}")
+            ax.plot("timestamp", "gsr-value",data=self.arduino_connection.data[sensor_id], label=f"Sensor {sensor_id+1}")
         ax.set_xlabel("Time [s]")
-        ax.set_ylabel("GSR-Value")
+        ax.set_ylabel("HR-Value [ohm]")
         ax.legend()
         self.canvas.figure = f
 

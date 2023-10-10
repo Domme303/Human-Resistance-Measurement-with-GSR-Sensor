@@ -21,7 +21,7 @@ class ArduinoConnection:
 
         self.data = {}
         for sensor_id in range(self.number_sensors):
-            self.data[sensor_id] = pd.DataFrame(columns=["timestamp", "value"])
+            self.data[sensor_id] = pd.DataFrame(columns=["timestamp", "gsr-value", "hr-value"])
 
 
         assert type(self.serial_port) == str
@@ -77,7 +77,8 @@ class ArduinoConnection:
         _, sensor_id, value = message.split(",")
         sensor_id = int(sensor_id)
         value = int(value)
-        row = {"timestamp": time.perf_counter()-self.start_time, "value": value}
+        hr = ((1024+(2*value))*10000)/((512-value)+0.00001)
+        row = {"timestamp": time.perf_counter()-self.start_time, "gsr-value": value, "hr-value": hr}
         
         self.data[sensor_id].loc[len(self.data[sensor_id])] = row
 

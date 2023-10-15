@@ -100,8 +100,6 @@ void parseData() {
     measure = false;
     build_connection = true;
   }
-
-
 }
 
 
@@ -116,28 +114,13 @@ void setup(){
 void loop(){
   getDataFromPC();
 
-  if (build_connection) {
+  if (build_connection) { // Wait for pc to respond
     Serial.println("<ready>");
     if (readInProgress) {
       build_connection = false;
     }
-  }
-
-  // if (num_sensors_set) {
-  //   Serial.print("<Num Sensors ");
-  //   Serial.print(num_sensors);
-  //   Serial.println(">");
-  // }
-  // if (pins_set) {
-  //   Serial.print("<Pins ");
-  //   for(int i=0;i<num_sensors;i++) {
-  //     Serial.print(gsr_pins[i]);
-  //     Serial.print(" ");
-  //   }
-  //   Serial.println(">");
-  // }
-
-  if (measure) {
+    delay(50);
+  } else if (measure) { // Run Sensor measurements
     for(int sensor=0;sensor<num_sensors;sensor++) {
       long sum=0;
       for(int i=0;i<10;i++)           //Average the 10 measurements to remove the glitch
@@ -153,15 +136,11 @@ void loop(){
       Serial.print(gsr_average);
       Serial.println(">");
     }
-    
+    delay(150);
+  } else { // Wait for commands
+    delay(50);
   }
 
-  delay(25);
   
-
-  // <NumSensors,2>
-  // <Pins,A0,A2>
-
-
   
 }

@@ -1,1 +1,4 @@
-pyserial-3.5
+pyserial==3.5
+matplotlib==3.8
+pandas==2.1.1
+auto-py-to-exe==2.41.0

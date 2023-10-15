@@ -1,6 +1,6 @@
 # Human Resistance Measurement with GSR Sensor
 
-Welcome to the Human Resistance Measurement project, designed to make the utilization of cost-effective GSR (Galvanic Skin Response) sensors effortless for individuals with little to no programming experience. This project is tailored to be user-friendly and compatible with Arduino or Arduino-compatible boards. While it is primarily developed with the [Grove - GSR sensor](https://www.seeedstudio.com/Grove-GSR-sensor-p-1614.html) and the [Seeeduino V4.3](https://www.seeedstudio.com/Seeeduino-V4-2-p-2517.html), it can be adapted to work with similar sensors or Arduino boards.
+Welcome to the Human Resistance Measurement project, designed to make the utilization of cost-effective GSR (Galvanic Skin Response) sensors effortless for individuals with little to no programming experience. This project is tailored to be user-friendly and compatible with Arduino or Arduino-compatible boards. While it is primarily developed with the [Grove - GSR sensor](https://www.seeedstudio.com/Grove-GSR-sensor-p-1614.html) and the [Seeeduino V4.3](https://www.seeedstudio.com/Seeeduino-V4-2-p-2517.html), it can be adapted to work with similar sensors or Arduino boards. More details about the board and sensors used and how they can be wired can be found on https://wiki.seeedstudio.com/Grove-GSR_Sensor/.
 
 ## Getting Started
 

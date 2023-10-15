@@ -1,11 +1,7 @@
 import configparser
 import serial
-import json
 import time
-import tkinter
 import pandas as pd
-
-from utils import resource_path
 
 class ArduinoConnection:
     def __init__(self, config:configparser) -> None:
@@ -41,11 +37,12 @@ class ArduinoConnection:
         return True
     
     def start_measurement(self) -> None:
-        self.start_time = time.perf_counter()
-        self.sent_to_arduino("start")
+        if self.connected:
+            self.sent_to_arduino("start")
 
     def stop_measurement(self) -> None:
-        self.sent_to_arduino("stop")
+        if self.connected:
+            self.sent_to_arduino("stop")
     
     def wait_message(self, message_query) -> str:
         message = ""
@@ -74,6 +71,8 @@ class ArduinoConnection:
     
     def collect(self) -> None:
         message = self.wait_message("Sensor")
+        if self.start_time is None:
+            self.start_time = time.perf_counter()
         _, sensor_id, value = message.split(",")
         sensor_id = int(sensor_id)
         value = int(value)
@@ -81,6 +80,18 @@ class ArduinoConnection:
         row = {"timestamp": time.perf_counter()-self.start_time, "gsr-value": value, "hr-value": hr}
         
         self.data[sensor_id].loc[len(self.data[sensor_id])] = row
+
+    def save(self, sensor_id, file) -> None:
+        if file.split(".")[-1] == "csv":
+            self.data[sensor_id].dropna().to_csv(file)
+        elif file.split(".")[-1] == "xlsx":
+            self.data[sensor_id].dropna().to_excel(file)
+
+    def reset(self) -> None:
+        self.stop_measurement()
+        self.start_time = None
+        for sensor_id in range(self.number_sensors):
+            self.data[sensor_id] = pd.DataFrame(columns=["timestamp", "gsr-value", "hr-value"])
 
     def close(self) -> None:
         if self.serial_connection is not None:
@@ -92,7 +103,7 @@ class ArduinoConnection:
 
 if __name__ == "__main__":
     config = configparser.ConfigParser()
-    config.read(resource_path('config.ini'))
+    config.read('config.ini')
 
     try:
         arduino_connection = ArduinoConnection(config)
